@@ -1,1 +1,16 @@
+Andmed ja informatsioon 
+Andmed - see on töödeldud informatsioon
+Haldus - администрирование сетей или обслуживание
+Andmebaaside haldussüsteemid - системы администрирования БД - Oracle, MS SQL Server, mariaDB/phpMyadmin, Access
 
+-------------------------------------------------------------------------------------------------------------
+tabel / tabelid - табель, табели
+rida / read - строка, строки
+veerg / veerud - столбец, столбцы
+rida = kirjed - записи
+veerg=väli - поля
+päring - запрос
+käivita päring - запусти запрос - EXECUTE QUERY!
+värskenda - uuenda - обновить
+Loo - создать
+Kustuta - вырезать
