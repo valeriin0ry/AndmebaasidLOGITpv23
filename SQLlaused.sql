@@ -112,3 +112,44 @@ ALTER TABLE inimene
 ADD constraint fk_auto
 FOREIGN KEY (autoID)
 references auto(autoID);
+
+
+
+
+
+CREATE TABLE loom(
+loomID int PRIMARY KEY AUTO_INCREMENT,
+nimi varchar(50),
+kaal decimal(2,2)
+);
+
+
+CREATE TABLE tyyp(
+tyypID int PRIMARY KEY AUTO_INCREMENT,
+tyyp varchar(50),
+kirjeldus varchar(70)
+);
+INSERT INTO tyyp(tyyp, kirjeldus)
+VALUES ('taksa','asub tallinnas');
+
+ALTER TABLE loom ADD tyypID int;
+
+
+INSERT INTO tyyp(tyyp, kirjeldus)
+VALUES ('kass','musta kass');
+
+
+ALTER TABLE loom
+ADD constraint fk_tyyp
+FOREIGN KEY (tyypID)
+references tyyp(tyypID);
+
+INSERT INTO loom(nimi,kaal)
+VALUES ('Faceit','5,70');
+
+ALTER TABLE inimene ADD loomID int;
+
+ALTER TABLE inimene
+ADD constraint fk_loom
+FOREIGN KEY (loomID)
+references loom(loomID);
