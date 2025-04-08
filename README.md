@@ -1,3 +1,5 @@
+![image](https://github.com/user-attachments/assets/4da4852f-5308-44d6-85d0-2bc0ffea0bc8)
+
 ## Andmetüübid
 1. **Arvulised** - int, decimal(5,2), kus 2 numbri peale koma, bigint, smallint, real
 2. **Teksti/sümboolid** -VARCHAR(255), CHAR(10), TEXT
