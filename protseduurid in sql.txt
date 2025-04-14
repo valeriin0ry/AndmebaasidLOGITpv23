@@ -1,0 +1,67 @@
+CREATE DATABASE proceduurashLOGITpv23;
+USE proceduurashLOGITpv23;
+
+CREATE TABLE filmid(
+filmID int primary key identity(1,1),
+filmNimi varchar(30) unique,
+filmPikkus int,
+rezisoor varchar(30)
+);
+SELECT * from filmid;
+
+INSERT INTO filmid(filmNimi, filmPikkus, rezisoor)
+VALUES ('Minecraft', 120, 'Jared Hees');
+
+--protseduur, mis lisab uus film ja kohe näitav tabelis (INSERT, SELECT)
+CREATE PROCEDURE lisaFilm
+@nimi varchar(30),
+@pikkus int,
+@rezisoor varchar(30)
+AS
+BEGIN
+INSERT INTO filmid(filmNimi, filmPikkus, rezisoor)
+VALUES (@nimi, @pikkus, @rezisoor);
+SELECT * from filmid;
+END;
+
+--kutse
+EXEC lisaFilm  '6APAH4UK IIIOH', 250, 'testtest';
+
+DROP Procedure lisaFilm;
+
+--Proceduur, mis kustutab filmi filmID järgi (DELETE, SELECT)
+CREATE PROCEDURE kustutaFilm
+@id int
+AS
+BEGIN
+SELECT * from filmid;
+DELETE FROM filmid WHERE filmID=@id;
+END;
+--kutse
+EXEC kustutaFilm 1;
+EXEC kustutaFilm @id=1;
+
+--proceduur, mis uuendab filmiPikkus 5% suurendab
+CREATE PROCEDURE uuendaFilmiPikkus
+AS
+BEGIN
+SELECT * FROM filmid;
+UPDATE filmid SET filmPikkus=filmPikkus*1.05;
+SELECT * FROM filmid;
+END;
+
+--kutse
+EXEC uuendaFilmiPikkus;
+
+--proceduur, mis uuendab filmiPikkus. kasutaja sisestav väärtus
+CREATE PROCEDURE uuendaFilmiPikkus2
+@arv decimal(5,2)
+AS
+BEGIN
+SELECT * FROM filmid;
+UPDATE filmid SET filmPikkus=filmPikkus*@arv;
+SELECT * FROM filmid;
+END;
+
+--kutse
+EXEC uuendaFilmiPikkus2 @arv=0.5;
