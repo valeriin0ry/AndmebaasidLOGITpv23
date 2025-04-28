@@ -1,0 +1,52 @@
+CREATE TABLE firma(
+	firmaID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	firmanimi VARCHAR(20) unique,
+	aadress VARCHAR(20),
+	telefon VARCHAR(20)
+);
+
+INSERT INTO firma(firmanimi, aadress, telefon)
+VALUES ('poco', 'ukraine', '00050000');
+
+SELECT * FROM firma
+WHERE firmanimi LIKE '%a%'
+
+CREATE TABLE praktikajuhendaja(
+	praktikajuhendajaID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	eesnimi VARCHAR(20) unique,
+	perekonnanimi VARCHAR(20) unique,
+	synniaeg VARCHAR(20),
+	telefon VARCHAR(20)
+);
+
+INSERT INTO praktikajuhendaja(eesnimi, perekonnanimi, synniaeg, telefon)
+VALUES ('Mikhail', 'Agapov', '01.09.2000', '62135613');
+
+SELECT * FROM praktikajuhendaja
+
+CREATE TABLE praktikabaas(
+	praktikabaasID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	firmaID int,
+	praktikatingimused varchar(20),
+	arvutiprogramm varchar(20),
+	juhendajaID int,
+	FOREIGN KEY (firmaID) REFERENCES firma(firmaID),
+	FOREIGN KEY (juhendajaID) REFERENCES praktikajuhendaja(praktikajuhendajaID)
+);
+
+INSERT INTO praktikabaas (firmaID, praktikatingimused, arvutiprogramm, juhendajaID) VALUES
+(1, 'Kontoritöö', 'MS Office', 1),
+(2, 'Andmeanalüüs', 'Excel', 2),
+(3, 'Veebiarendus', 'Visual Studio', 3),
+(4, 'Energeetika', 'AutoCAD', 4),
+(5, 'Õppearendus', 'Moodle', 5);
+SELECT *
+FROM praktikabaas p
+JOIN firma f ON f.firmaID = p.firmaID
+ORDER BY f.firmanimi;
+
+SELECT *
+FROM praktikajuhendaja 
+WHERE Month(synniaeg) = 10
+   OR Month(synniaeg) = 11
+   OR Month(synniaeg) = 9;
