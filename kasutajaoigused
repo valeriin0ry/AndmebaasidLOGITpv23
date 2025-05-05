@@ -32,3 +32,39 @@ ALTER TABLE uustabel DROP column testvanus;
 create table uustabel2(
 id int primary key identity(1,1),
 testnimi varchar(25));
+ontrollime õigusi:
+
+Kas kasutaja saab tabelit Opilased vaadata?
+Kui logid sisse kasutajana opilane, siis saab ta teha päringu:
+
+sql
+Kopeeri
+Redigeeri
+SELECT * FROM Opilased;
+Kas kasutaja saab tabelisse Õppetunnid lisada andmeid?
+Kasutaja saab lisada andmeid tabelisse Õppetunnid:
+
+sql
+Kopeeri
+Redigeeri
+INSERT INTO Õppetunnid (tunni_nimi, opetaja, mahud) 
+VALUES ('Matemaatika', 'Jaan Tamm', 5);
+Kas kasutaja saab tabelitest andmeid kustutada?
+Kasutaja ei saa kustutada ühtegi rida. Testimiseks proovige järgmine:
+
+sql
+Kopeeri
+Redigeeri
+DELETE FROM Opilased WHERE id = 1;
+või
+
+sql
+Kopeeri
+Redigeeri
+DELETE FROM Õppetunnid WHERE id = 1;
+See peaks andma vea, kuna kustutamisõigus on ära võetud.
+
+Lõppjärgud:
+Kõik vajalikud tabelid on loodud ja õigused määratud, järgides ülesande nõudeid. Kasutaja opilane saab andmeid vaadata tabelist Opilased ja lisada andmeid tabelisse Õppetunnid, kuid ei saa andmeid kustutada.
+
+Kui sul on täiendavaid küsimusi või vajad abi koodiga, siis küsi julgelt!
