@@ -1,0 +1,34 @@
+create database kasutajalogit;
+use kasutajalogit
+create table uustabel(
+id int primary key identity(1,1),
+testnimi varchar(25));
+insert into uustabel(testnimi)
+values ('test');
+select * from uustabel
+--lisab uus verg
+alter table uustabel add testvanus int;
+--kustutab veerg
+ALTER TABLE uustabel DROP testvanus;
+--teeme kasutaja kes saab tabeli struktuuri muuta
+GRANT ALTER ON uustabel to kasutajavalera;
+--saab muuta kõik tabeleid;
+GRANT ALTER TO kasutajavalera;
+
+--kasutaja saab luua tabeleid
+GRANT CREATE TABLE TO kasutajavalera
+GRANT CONTROL ON SCHEMA ::dbo TO kasutajavalera
+
+
+
+
+
+
+--õiguste kontroll
+SELECT * from uustabel
+ALTER TABLE uustabel ADD testvanus int;
+ALTER TABLE uustabel DROP column testvanus;
+
+create table uustabel2(
+id int primary key identity(1,1),
+testnimi varchar(25));
