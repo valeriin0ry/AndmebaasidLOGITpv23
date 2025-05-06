@@ -1,0 +1,126 @@
+CREATE DATABASE trigerLOGIT
+use trigerLOGIT
+
+CREATE TABLE toode(
+toodeID int PRIMARY KEY identity(1,1),
+toodeNimetus varchar(25),
+toodeHind decimal(5,2))
+--taabel logi, mis täidab triger
+CREATE TABLE logi(
+id int primary key identity(1,1),
+tegevus varchar(25),
+kuupaev datetime,
+andmed TEXT)
+;
+--INSERT triger, mis jälgib andmete lisamine toode-tabelis
+CREATE TRIGGER toodeLisamine
+ON toode
+FOR INSERT
+AS 
+INSERT INTO logi(tegevus, kuupaev, andmed)
+SELECT 'toode on lisatud',
+GETDATE(),
+inserted.toodeNimetus
+from inserted;
+
+DROP TRIGGER toodeLisamine
+
+INSERT INTO toode(toodeNimetus, toodeHind)
+VALUES ('Fanta', 500)
+SELECT * FROM toode;
+SELECT * FROM logi;
+
+--DELETE TRIGER, mis jälgib toode kustutamine tabelis
+CREATE TRIGGER toodeKustutamine
+on toode
+FOR DELETE
+AS 
+INSERT INTO logi(tegevus, kuupaev, andmed)
+SELECT 'toode on kustutatud',
+GETDATE(),
+CONCAT(deleted.toodeNimetus, ' | tegi kasutaja : ', SYSTEM_USER)
+from deleted;
+--kontroll
+DELETE FROM toode
+WHERE toodeID=2;
+SELECT * FROM toode;
+SELECT * FROM logi;
+
+--Update Triger. mis jälgib toode uuendamine tabelis
+CREATE TRIGGER toodeUuendamine
+on toode
+FOR UPDATE
+AS 
+INSERT INTO logi(tegevus, kuupaev, andmed)
+SELECT 'toode on uuendatud',
+GETDATE(),
+CONCAT('Vanad andmed - ', deleted.toodeNimetus,', ', deleted.toodeHind,
+' \nUuedd andmed - ', inserted.toodeNimetus,', ', inserted.toodeHind,
+' | tegi kasutaja ', SYSTEM_USER)
+from deleted INNER JOIN inserted
+ON deleted.toodeID=inserted.toodeID;
+
+--kontroll
+UPDATE toode SET toodeHind=4.00
+WHERE toodeNimetus='Fanta'
+SELECT * FROM toode;
+SELECT * FROM logi;
+
+
+CREATE TABLE products(
+    product_id INT IDENTITY PRIMARY KEY,
+    product_name VARCHAR(255) NOT NULL,
+    brand_id INT NOT NULL,
+    category_id INT NOT NULL,
+    model_year SMALLINT NOT NULL,
+    list_price DEC(10,2) NOT NULL,
+);
+CREATE TABLE product_audits(
+    change_id INT IDENTITY PRIMARY KEY,
+    product_id INT NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
+    brand_id INT NOT NULL,
+    category_id INT NOT NULL,
+    model_year SMALLINT NOT NULL,
+    list_price DEC(10,2) NOT NULL,
+    updated_at DATETIME NOT NULL,
+    operation CHAR(3) NOT NULL,
+    CHECK(operation = 'INS' or operation='DEL')
+);
+CREATE TRIGGER trg_product_audit
+ON products
+AFTER INSERT, DELETE
+AS
+BEGIN
+SET NOCOUNT ON;
+INSERT INTO product_audits(product_id, product_name, brand_id, category_id, model_year, list_price, updated_at, operation)
+SELECT
+i.product_id,
+product_name,
+brand_id,
+category_id,
+model_year,
+i.list_price,
+GETDATE(),
+'INS'
+FROM inserted i
+UNION ALL
+SELECT
+d.product_id,
+product_name,
+brand_id,
+category_id,
+model_year,
+d.list_price,
+GETDATE(),
+'DEL'
+FROM deleted d;
+END
+INSERT INTO products(product_name, brand_id, category_id, model_year, list_price)
+VALUES ('Test product', 1, 1, 2018, 599);
+SELECT * FROM product_audits;
+DELETE FROM products
+WHERE product_id = 4;
+SELECT * FROM product_audits;
+
+DROP TRIGGER trg_product_audit;
