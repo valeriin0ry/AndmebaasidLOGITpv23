@@ -49,4 +49,74 @@ SELECT *
 FROM praktikajuhendaja 
 WHERE Month(synniaeg) = 10
    OR Month(synniaeg) = 11
-   OR Month(synniaeg) = 9;
+   OR Month(synniaeg) = 9;  
+
+CREATE TABLE Praktikabaas_logi (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    kasutaja VARCHAR(50),
+    aeg DATETIME,
+    tegevus VARCHAR(250),
+    andmed VARCHAR(250));
+
+select * from praktikabaas_logi;
+
+CREATE TRIGGER praktikabaas_lisamine
+ON praktikabaas
+AFTER INSERT
+AS
+INSERT INTO Praktikabaas_logi (tegevus, aeg, kasutaja, andmed)
+SELECT
+    'praktikabaas added',
+    GETDATE(),
+    SYSTEM_USER,
+    CONCAT('Uud andmed - firmaID: ', inserted.firmaID, 
+	', tingimused: ', inserted.praktikatingimused,
+	', programm: ', inserted.arvutiprogramm, ', juhendajaID: ', inserted.juhendajaID)
+FROM inserted;
+
+INSERT INTO praktikabaas (firmaID, praktikatingimused, arvutiprogramm, juhendajaID)
+VALUES (1, 'vene keel', 'ubuntu', 1);
+
+CREATE TRIGGER praktikabaas_uuendamine
+ON praktikabaas
+FOR UPDATE
+AS
+INSERT INTO Praktikabaas_logi (tegevus, aeg, kasutaja, andmed)
+SELECT
+    'praktikabaas updated',
+    GETDATE(),
+    SYSTEM_USER,
+    CONCAT('Vanad andmed - firmaID: ', deleted.firmaID, 
+	', tingimused: ', deleted.praktikatingimused,
+	', programm: ', deleted.arvutiprogramm, 
+	', juhendajaID: ', deleted.juhendajaID, 
+	' Uued andmed - firmaID: ', inserted.firmaID, 
+	', tingimused: ', inserted.praktikatingimused,
+	', programm: ', inserted.arvutiprogramm, ', juhendajaID: ', inserted.juhendajaID)
+FROM deleted
+JOIN inserted ON deleted.praktikabaasID = inserted.praktikabaasID;
+
+
+UPDATE praktikabaas
+SET praktikatingimused = 'Kontoritöö', arvutiprogramm = 'Linux OS'
+WHERE praktikabaasID = 1;
+
+
+
+
+
+INSERT INTO praktikajuhendaja (eesnimi, perekonnanimi, synniaeg, telefon)
+VALUES ('tes2t', 'test2', '55.22.34', '25662721');
+
+INSERT INTO firma(firmanimi, aadress, telefon)
+VALUES ('pyaterochka', 'pywkina47', '88055535')
+
+select * from firma;
+select * from praktikabaas;
+select * from praktikabaas_logi;
+select * from praktikajuhendaja;
+drop table praktikabaas_logi;
+drop trigger praktikabaas_lisamine;
+select * from praktikabaas;
+select * from praktikabaas_logi;
+drop trigger praktikabaas_uuendamine;
