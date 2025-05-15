@@ -1,3 +1,4 @@
+use ashurovlogitpv23
 CREATE TABLE firma(
 	firmaID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 	firmanimi VARCHAR(20) unique,
@@ -6,7 +7,11 @@ CREATE TABLE firma(
 );
 
 INSERT INTO firma(firmanimi, aadress, telefon)
-VALUES ('poco', 'ukraine', '00050000');
+VALUES ('zazaworld', 'ukraine', '00320'),
+('android', 'ukraine', '513513'),
+('netidie', 'ukraine', '51251'),
+('pypiriwki', 'zimbabve', '63155'),
+('bunnyhop', 'madagaskar', '516315');
 
 SELECT * FROM firma
 WHERE firmanimi LIKE '%a%'
@@ -16,11 +21,22 @@ CREATE TABLE praktikajuhendaja(
 	eesnimi VARCHAR(20) unique,
 	perekonnanimi VARCHAR(20) unique,
 	synniaeg VARCHAR(20),
-	telefon VARCHAR(20)
+	telefon VARCHAR(20),
+	palk DECIMAL(10,2) 
 );
 
 INSERT INTO praktikajuhendaja(eesnimi, perekonnanimi, synniaeg, telefon)
-VALUES ('Mikhail', 'Agapov', '01.09.2000', '62135613');
+VALUES ('Mikhail', 'Agapov', '01.09.2000', '62135613'),
+('Lury', 'Avik', '04.07.2003', '00320'),
+('Irina', 'Merkulova', '01.05.2005', '513513'),
+('Marina', 'Oleinik', '01.01.2000', '51251'),
+('Jekaterina', 'Ratsep', '01.03.2001', '63155');
+
+UPDATE praktikajuhendaja SET palk = 1200 WHERE eesnimi = 'Mikhail';
+UPDATE praktikajuhendaja SET palk = 1000 WHERE eesnimi = 'Lury';
+UPDATE praktikajuhendaja SET palk = 1100 WHERE eesnimi = 'Irina';
+UPDATE praktikajuhendaja SET palk = 1050 WHERE eesnimi = 'Marina';
+UPDATE praktikajuhendaja SET palk = 950 WHERE eesnimi = 'Jekaterina';
 
 SELECT * FROM praktikajuhendaja
 
@@ -39,7 +55,7 @@ INSERT INTO praktikabaas (firmaID, praktikatingimused, arvutiprogramm, juhendaja
 (2, 'Andmeanalüüs', 'Excel', 2),
 (3, 'Veebiarendus', 'Visual Studio', 3),
 (4, 'Energeetika', 'AutoCAD', 4),
-(5, 'Õppearendus', 'Moodle', 5);
+(6, 'Õppearendus', 'Moodle', 5);
 SELECT *
 FROM praktikabaas p
 JOIN firma f ON f.firmaID = p.firmaID
@@ -74,9 +90,6 @@ SELECT
 	', programm: ', inserted.arvutiprogramm, ', juhendajaID: ', inserted.juhendajaID)
 FROM inserted;
 
-INSERT INTO praktikabaas (firmaID, praktikatingimused, arvutiprogramm, juhendajaID)
-VALUES (1, 'vene keel', 'ubuntu', 1);
-
 CREATE TRIGGER praktikabaas_uuendamine
 ON praktikabaas
 FOR UPDATE
@@ -99,24 +112,73 @@ JOIN inserted ON deleted.praktikabaasID = inserted.praktikabaasID;
 
 UPDATE praktikabaas
 SET praktikatingimused = 'Kontoritöö', arvutiprogramm = 'Linux OS'
-WHERE praktikabaasID = 1;
+WHERE praktikabaasID = 6;
+
+
+
+--SELECT (4-10)
+
+SELECT 
+    MONTH(CONVERT(DATE, synniaeg, 104)) AS kuu,
+    COUNT(*) AS juhendajate_arv
+FROM praktikajuhendaja
+GROUP BY MONTH(CONVERT(DATE, synniaeg, 104))
+ORDER BY kuu;
+
+-----------------------------------------------
+
+SELECT juhendajaID, COUNT(*) AS praktikakohad
+FROM praktikabaas
+GROUP BY juhendajaID;
+
+------------------------------------------------
+
+ALTER TABLE praktikajuhendaja
+ADD palk DECIMAL(10, 2);
+
+------------------------------------------------
+
+SELECT eesnimi, palk, palk * 0.2 AS maks
+FROM praktikajuhendaja
+WHERE palk IS NOT NULL;
+
+------------------------------------------------
+
+SELECT AVG(palk) AS keskmine_palk
+FROM praktikajuhendaja
+WHERE palk IS NOT NULL;
+
+------------------------------------------------
+
+SELECT * 
+FROM firma 
+WHERE firmanimi LIKE '%a%';
+
+SELECT * 
+FROM praktikajuhendaja 
+WHERE MONTH(CONVERT(DATE, synniaeg, 104)) IN (9, 10, 11);
+
+SELECT juhendajaID, COUNT(*) AS praktikakohad
+FROM praktikabaas
+GROUP BY juhendajaID;
 
 
 
 
 
-INSERT INTO praktikajuhendaja (eesnimi, perekonnanimi, synniaeg, telefon)
-VALUES ('tes2t', 'test2', '55.22.34', '25662721');
 
-INSERT INTO firma(firmanimi, aadress, telefon)
-VALUES ('pyaterochka', 'pywkina47', '88055535')
+
+
+
+
 
 select * from firma;
 select * from praktikabaas;
 select * from praktikabaas_logi;
 select * from praktikajuhendaja;
-drop table praktikabaas_logi;
-drop trigger praktikabaas_lisamine;
 select * from praktikabaas;
 select * from praktikabaas_logi;
 drop trigger praktikabaas_uuendamine;
+drop table praktikabaas_logi;
+drop table praktikajuhendaja;
+drop trigger praktikabaas_lisamine;
