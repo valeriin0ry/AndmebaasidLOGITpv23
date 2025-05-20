@@ -24,7 +24,7 @@ SELECT * FROM Oppetunnid
 
 CREATE TABLE logi (
 id INT IDENTITY PRIMARY KEY,
-tegevus VARCHAR(10),       
+tegevus VARCHAR(50),       
 andmed NVARCHAR(MAX),       
 kasutaja SYSNAME,
 aeg DATETIME DEFAULT GETDATE()
@@ -36,7 +36,7 @@ AFTER INSERT
 AS
 BEGIN
 INSERT INTO logi (tegevus, andmed, kasutaja)
-SELECT 'INSERT',
+SELECT 'INSERT OPILASED',
 CONCAT('Eesnimi: ', eesnimi, ', Perenimi: ', perenimi, ', Email: ', email, ', Vanus: ', vanus),
 SUSER_SNAME()
 FROM inserted;
@@ -48,7 +48,7 @@ AFTER UPDATE
 AS
 BEGIN
 INSERT INTO logi (tegevus, andmed, kasutaja)
-SELECT 'UPDATE',
+SELECT 'UPDATE OPILASED',
 CONCAT('Old: Eesnimi=', d.eesnimi, ', New: ', i.eesnimi, ', Email=', d.email, ' - ', i.email),
 SUSER_SNAME()
 FROM deleted d
@@ -62,7 +62,7 @@ AFTER DELETE
 AS
 BEGIN
 INSERT INTO logi (tegevus, andmed, kasutaja)
-SELECT 'DELETE',
+SELECT 'DELETE OPILASED',
 CONCAT('Eesnimi: ', eesnimi, ', Email: ', email),
 SUSER_SNAME()
 FROM deleted;
@@ -76,7 +76,7 @@ AFTER INSERT
 AS
 BEGIN
 INSERT INTO logi (tegevus, andmed, kasutaja)
-SELECT 'INSERT',
+SELECT 'INSERT OPPETUNNID',
 CONCAT('Tund: ', tunni_nimi, ', Õpetaja: ', opetaja, ', Mahud: ', mahud),
 SUSER_SNAME()
 FROM inserted;
@@ -89,7 +89,7 @@ AFTER UPDATE
 AS
 BEGIN
 INSERT INTO logi (tegevus, andmed, kasutaja)
-SELECT 'UPDATE',
+SELECT 'UPDATE OPPETUNNID',
 CONCAT('Old: ', d.tunni_nimi, ' -> New: ', i.tunni_nimi, ', Õpetaja: ', d.opetaja, ' -> ', i.opetaja),
 SUSER_SNAME()
 FROM deleted d
@@ -104,7 +104,7 @@ AFTER DELETE
 AS
 BEGIN
 INSERT INTO logi (tegevus, andmed, kasutaja)
-SELECT 'DELETE',
+SELECT 'DELETE OPPETUNNID',
 CONCAT('Tund: ', tunni_nimi, ', Õpetaja: ', opetaja),
 SUSER_SNAME()
 FROM deleted;
@@ -114,12 +114,14 @@ END;
 SELECT * FROM logi
 
 INSERT INTO dbo.Oppetunnid (tunni_nimi, opetaja, mahud)
-VALUES ('Test', 'Test', 10);
+VALUES ('Tes1t4', 'Te1st4', 120);
 
 INSERT INTO Opilased (eesnimi, perenimi, email, vanus)
-VALUES ('fsafasf', 'fsafaf', 'bykawka@casebattle.com', 30);
-UPDATE Opilased SET email = 'nebykawka@mail.ru' WHERE eesnimi = 'fsafasf';
+VALUES ('fsafafsf', 'fsdafaf', 'bykawska@casebattle.com', 30);
+UPDATE Oppetunnid SET mahud = '51255' 
 DELETE FROM Opilased WHERE eesnimi = 'fsafasf';
+SELECT * FROM Opilased
+
 
 
 GRANT SELECT ON dbo.Opilased TO opilane333;
