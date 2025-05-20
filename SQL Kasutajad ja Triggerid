@@ -1,0 +1,135 @@
+CREATE DATABASE Kool_DB;
+USE Kool_DB;
+CREATE TABLE Opilased (
+id INT identity PRIMARY KEY,
+eesnimi VARCHAR(50),
+perenimi VARCHAR(50),
+email VARCHAR(100),
+vanus INT
+);
+CREATE TABLE Oppetunnid (
+id INT identity PRIMARY KEY,
+tunni_nimi VARCHAR(100),
+opetaja VARCHAR(100),
+mahud INT
+);
+
+
+
+SELECT * FROM Oppetunnid
+
+
+
+
+
+CREATE TABLE logi (
+id INT IDENTITY PRIMARY KEY,
+tegevus VARCHAR(10),       
+andmed NVARCHAR(MAX),       
+kasutaja SYSNAME,
+aeg DATETIME DEFAULT GETDATE()
+);
+
+CREATE TRIGGER opilasedins
+ON Opilased
+AFTER INSERT
+AS
+BEGIN
+INSERT INTO logi (tegevus, andmed, kasutaja)
+SELECT 'INSERT',
+CONCAT('Eesnimi: ', eesnimi, ', Perenimi: ', perenimi, ', Email: ', email, ', Vanus: ', vanus),
+SUSER_SNAME()
+FROM inserted;
+END;
+
+CREATE TRIGGER opilasedupd
+ON Opilased
+AFTER UPDATE
+AS
+BEGIN
+INSERT INTO logi (tegevus, andmed, kasutaja)
+SELECT 'UPDATE',
+CONCAT('Old: Eesnimi=', d.eesnimi, ', New: ', i.eesnimi, ', Email=', d.email, ' - ', i.email),
+SUSER_SNAME()
+FROM deleted d
+JOIN inserted i ON d.id = i.id;
+END;
+
+
+CREATE TRIGGER opilaseddel
+ON Opilased
+AFTER DELETE
+AS
+BEGIN
+INSERT INTO logi (tegevus, andmed, kasutaja)
+SELECT 'DELETE',
+CONCAT('Eesnimi: ', eesnimi, ', Email: ', email),
+SUSER_SNAME()
+FROM deleted;
+END;
+
+
+
+CREATE TRIGGER oppetunnidins
+ON Oppetunnid
+AFTER INSERT
+AS
+BEGIN
+INSERT INTO logi (tegevus, andmed, kasutaja)
+SELECT 'INSERT',
+CONCAT('Tund: ', tunni_nimi, ', Õpetaja: ', opetaja, ', Mahud: ', mahud),
+SUSER_SNAME()
+FROM inserted;
+END;
+
+
+CREATE TRIGGER oppetunnidupd
+ON Oppetunnid
+AFTER UPDATE
+AS
+BEGIN
+INSERT INTO logi (tegevus, andmed, kasutaja)
+SELECT 'UPDATE',
+CONCAT('Old: ', d.tunni_nimi, ' -> New: ', i.tunni_nimi, ', Õpetaja: ', d.opetaja, ' -> ', i.opetaja),
+SUSER_SNAME()
+FROM deleted d
+JOIN inserted i ON d.id = i.id;
+END;
+
+
+
+CREATE TRIGGER oppetunniddel
+ON Oppetunnid
+AFTER DELETE
+AS
+BEGIN
+INSERT INTO logi (tegevus, andmed, kasutaja)
+SELECT 'DELETE',
+CONCAT('Tund: ', tunni_nimi, ', Õpetaja: ', opetaja),
+SUSER_SNAME()
+FROM deleted;
+END;
+
+
+SELECT * FROM logi
+
+INSERT INTO dbo.Oppetunnid (tunni_nimi, opetaja, mahud)
+VALUES ('Test', 'Test', 10);
+
+INSERT INTO Opilased (eesnimi, perenimi, email, vanus)
+VALUES ('fsafasf', 'fsafaf', 'bykawka@casebattle.com', 30);
+UPDATE Opilased SET email = 'nebykawka@mail.ru' WHERE eesnimi = 'fsafasf';
+DELETE FROM Opilased WHERE eesnimi = 'fsafasf';
+
+
+GRANT SELECT ON dbo.Opilased TO opilane333;
+GRANT INSERT ON dbo.Oppetunnid TO opilane333;
+
+
+GRANT SELECT ON dbo.Opilased TO opilane333;
+GRANT INSERT ON dbo.Oppetunnid TO opilane333;
+GRANT UPDATE ON dbo.Opilased TO opilane333;
+GRANT UPDATE ON dbo.Oppetunnid TO opilane333;
+DENY DELETE ON dbo.Opilased TO opilane333;
+DENY DELETE ON dbo.Oppetunnid TO opilane333;
+DENY CREATE TABLE TO opilane333;
