@@ -1,5 +1,7 @@
 CREATE DATABASE Kool_DB;
 USE Kool_DB;
+
+
 CREATE TABLE Opilased (
 id INT identity PRIMARY KEY,
 eesnimi VARCHAR(50),
@@ -114,10 +116,10 @@ END;
 SELECT * FROM logi
 
 INSERT INTO dbo.Oppetunnid (tunni_nimi, opetaja, mahud)
-VALUES ('Tes1t4', 'Te1st4', 120);
+VALUES ('andmebaasid', 'irina merkulova', 240);
 
 INSERT INTO Opilased (eesnimi, perenimi, email, vanus)
-VALUES ('fsafafsf', 'fsdafaf', 'bykawska@casebattle.com', 30);
+VALUES ('nikita', 'barashek', 'bykawkatotal@casebattle.com', 15);
 UPDATE Oppetunnid SET mahud = '51255' 
 DELETE FROM Opilased WHERE eesnimi = 'fsafasf';
 SELECT * FROM Opilased
@@ -135,3 +137,48 @@ GRANT UPDATE ON dbo.Oppetunnid TO opilane333;
 DENY DELETE ON dbo.Opilased TO opilane333;
 DENY DELETE ON dbo.Oppetunnid TO opilane333;
 DENY CREATE TABLE TO opilane333;
+
+
+
+
+
+
+CREATE PROCEDURE otsitaht
+@taht char(1)
+AS
+BEGIN
+SELECT * FROM Opilased
+WHERE eesnimi LIKE CONCAT(@taht, '%');
+SELECT * FROM Oppetunnid
+WHERE tunni_nimi LIKE CONCAT(@taht, '%');
+END;
+
+
+EXEC otsitaht 'A';
+
+
+
+
+CREATE PROCEDURE statopilased
+AS
+BEGIN
+SELECT 
+COUNT(*) AS 'Õpilaste Arv',  
+AVG(vanus) AS 'Keskmine Vanus',  
+MAX(vanus) AS 'Max Vanus',  
+MIN(vanus) AS 'Min Vanus' 
+FROM Opilased;
+END;
+
+
+EXEC statopilased;
+
+CREATE PROCEDURE opetajatund
+@opetaja VARCHAR(100)  
+AS
+BEGIN
+SELECT id, tunni_nimi AS 'Tunni Nimi', opetaja AS 'Õpetaja', mahud AS 'Mahud'
+FROM Oppetunnid WHERE opetaja LIKE CONCAT('%', @opetaja, '%');
+END;
+
+EXEC opetajatund @opetaja = 'irina merkulova';
