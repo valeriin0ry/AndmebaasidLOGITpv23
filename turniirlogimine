@@ -1,0 +1,88 @@
+user
+
+
+
+drop table Osaleja
+drop table Turniir
+drop table Voistlus
+select * from Voistlus
+select * from Osaleja 
+select * from Turniir 
+insert into Turniir(TurniirNimi) VALUES('BobroFight');
+
+SELECT * FROM Turniir
+
+
+admin
+
+
+
+
+REVOKE ALL ON Voistlus FROM opilaneValera;
+REVOKE ALL ON Turniir FROM opilaneValera;
+REVOKE ALL ON Osaleja FROM opilaneValera;
+
+GRANT SELECT, INSERT ON Voistlus TO opilaneValera;
+GRANT SELECT, INSERT ON Turniir TO opilaneValera;
+GRANT SELECT, INSERT ON Osaleja TO opilaneValera;
+
+
+INSERT INTO Turniir (TurniirNimi) VALUES ('Kevad');
+INSERT INTO Voistlus (VoistlusNimi, OsalejateArv, TurniirID) VALUES ('Jooks', 10, 1);
+
+
+CREATE PROCEDURE logi_voistlus_lisa
+AS
+BEGIN
+    INSERT INTO logi(tegevus) VALUES ('Lisati Voistlus');
+END
+
+CREATE PROCEDURE logi_voistlus_kustuta
+AS
+BEGIN
+    INSERT INTO logi(tegevus) VALUES ('Kustutati Voistlus');
+END
+
+
+CREATE TRIGGER lisa_logi
+ON Voistlus
+AFTER INSERT
+AS
+BEGIN
+  EXEC logi_voistlus_lisa;
+END
+
+
+CREATE TRIGGER kustuta_logi
+ON Voistlus
+AFTER DELETE
+AS
+BEGIN
+  EXEC logi_voistlus_kustuta;
+END
+
+
+INSERT INTO Turniir (TurniirNimi) VALUES ('Ke22sdvad');
+INSERT INTO Voistlus (VoistlusNimi, OsalejateArv, TurniirID) VALUES ('Jooka215ss', 10, 1);
+DELETE FROM Voistlus WHERE VoistlusID = 3;
+SELECT * FROM logi;
+
+
+CREATE PROCEDURE naita_voistlusi @nimi NVARCHAR(100)
+AS
+BEGIN
+  SELECT VoistlusNimi FROM Voistlus
+  JOIN Turniir ON Voistlus.TurniirID = Turniir.TurniirID
+  WHERE TurniirNimi = @nimi;
+END
+
+EXEC naita_voistlusi 'Kevad';
+
+BEGIN TRAN;
+INSERT INTO Turniir (TurniirNimi) VALUES ('Ajutine');
+ROLLBACK TRAN;
+
+(nado dobavit kasutaja)
+
+
+Is Identification, GETDATE(), Design, Relationship
