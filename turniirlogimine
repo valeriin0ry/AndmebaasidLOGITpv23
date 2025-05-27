@@ -31,17 +31,7 @@ INSERT INTO Turniir (TurniirNimi) VALUES ('Kevad');
 INSERT INTO Voistlus (VoistlusNimi, OsalejateArv, TurniirID) VALUES ('Jooks', 10, 1);
 
 
-CREATE PROCEDURE logi_voistlus_lisa
-AS
-BEGIN
-    INSERT INTO logi(tegevus) VALUES ('Lisati Voistlus');
-END
 
-CREATE PROCEDURE logi_voistlus_kustuta
-AS
-BEGIN
-    INSERT INTO logi(tegevus) VALUES ('Kustutati Voistlus');
-END
 
 
 CREATE TRIGGER lisa_logi
@@ -49,7 +39,7 @@ ON Voistlus
 AFTER INSERT
 AS
 BEGIN
-  EXEC logi_voistlus_lisa;
+   INSERT INTO logi(tegevus) VALUES ('Lisati Voistlus');
 END
 
 
@@ -58,7 +48,7 @@ ON Voistlus
 AFTER DELETE
 AS
 BEGIN
-  EXEC logi_voistlus_kustuta;
+   INSERT INTO logi(tegevus) VALUES ('Kustutati Voistlus');
 END
 
 
@@ -82,7 +72,8 @@ BEGIN TRAN;
 INSERT INTO Turniir (TurniirNimi) VALUES ('Ajutine');
 ROLLBACK TRAN;
 
-(nado dobavit kasutaja)
+
+(nado dobavit kasutaja, mb 4et s logami)
 
 
 Is Identification, GETDATE(), Design, Relationship
